@@ -1,0 +1,5 @@
+.idea
+databases/mysql
+logs/apache2
+logs/mysql
+www/laravel.dev/vendor
