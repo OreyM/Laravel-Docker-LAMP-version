@@ -3,3 +3,6 @@ databases/mysql
 logs/apache2
 logs/mysql
 www/laravel.dev/vendor
+www/laravel.dev/module
+www/laravel.dev/npm
+www/laravel.dev/.env
