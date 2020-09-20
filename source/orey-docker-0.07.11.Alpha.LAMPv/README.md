@@ -1,6 +1,3 @@
-# Laravel-Docker LAMP version
-v.1.0.1
-
 Интегрированы:
 * Laravel IDE Helper
 * Laravel Debugbar
