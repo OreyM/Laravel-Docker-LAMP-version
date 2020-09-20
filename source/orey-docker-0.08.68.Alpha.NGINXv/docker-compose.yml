@@ -1,0 +1,94 @@
+version: '3'
+
+services:
+
+    nginx:
+        build: 
+            context: ./build
+            dockerfile: nginx.docker
+        volumes: 
+            - ./www:/var/www
+            - ./build/nginx/ssl:/etc/nginx/ssl
+        ports: 
+            - "8080:443"
+        links: 
+            - php-fpm
+
+    php-fpm:
+        build:
+            context: ./build
+            dockerfile: php-fpm.docker
+        volumes:
+            - ./www:/var/www
+        links: 
+            - mysql
+            - redis
+        environment: 
+            - "DB_PORT=3306"
+            - "DB_HOST=mysql"
+            - "REDIS_PORT=6379"
+            - "REDIS_HOST=redis"
+
+    php-cli:
+        build:
+            context: ./build
+            dockerfile: php-cli.docker
+        volumes:
+            - ./www:/var/www
+        links: 
+            - mysql
+            - mysql-test
+            - redis
+        environment: 
+            - "DB_PORT=3306"
+            - "DB_HOST=mysql"
+            - "REDIS_PORT=6379"
+            - "REDIS_HOST=redis"
+        tty: true
+    
+    node:
+        build: 
+            context: ./build
+            dockerfile: node.docker
+        volumes:
+            - ./www:/var/www
+        tty: true
+    
+    mysql:
+        image: mysql:5.7
+        volumes: 
+            - ./databases/mysql-test:/var/lib/mysql
+        environment: 
+            - "MYSQL_ROOT_PASSWORD=root"
+            - "MYSQL_USER=orey"
+            - "MYSQL_PASSWORD=user"
+            - "MYSQL_DATABASE=app"
+        ports: 
+            - "33061:3306"
+
+    mysql-test:
+        image: mysql:5.7
+        volumes: 
+            - ./databases/mysql:/var/lib/mysql
+        environment: 
+            - "MYSQL_ROOT_PASSWORD=root"
+            - "MYSQL_USER=orey"
+            - "MYSQL_PASSWORD=user"
+            - "MYSQL_DATABASE=app_test"
+        ports: 
+            - "33062:3306"
+    
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        links: 
+            - mysql
+        environment:
+            PMA_HOST: mysql
+            PMA_PORT: 3306
+        ports:
+            - "6080:80"
+    
+    redis:
+        image: redis:3.0
+        ports: 
+            - "63791:6379"
